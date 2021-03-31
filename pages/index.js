@@ -1,65 +1,61 @@
+import { Container, Row, Col, Image, Button } from 'react-bootstrap';
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 
 export default function Home() {
+  const [profile, setProfile] = useState({})
+  // const [language, setLanguage] = useState({})
+  // const [email, setEmail] = useState({})
+
+  // const logout = () => {
+  //   liff.logout()
+  // }
+
+  useEffect(async () => {
+    const liff = (await import('@line/liff')).default
+    await liff.ready
+    const profile = await liff.getProfile()
+    const language = await liff.getLanguage()
+    // const email = await liff.getDecodedIDToken().email
+    console.log('language', language)
+    // console.log('email', email)
+    setProfile(profile)
+    // setLanguage(language)
+    // setEmail(email)
+  }, [profile.userId])
+
+
   return (
-    <div className={styles.container}>
+    <Container fluid="md">
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>My Profile</title>
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+      
+      <Row>
+        <Col>
+          <h1>Profile</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6} md={4}>
+        {profile.pictureUrl && <Image src={profile.pictureUrl} thumbnail="true" roundedCircle />}
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <div>User ID: {profile.userId}</div>
+          <div>Name: {profile.displayName}</div>
+          <div>Picture: {profile.pictureUrl}</div>
+          <div>Status: {profile.statusMessage}</div>
+          {/* <div>Language: {language}</div> */}
+          {/* <div>Email: {email}</div> */}
+        </Col>
+      </Row>
+      {/* <Row>
+        <Col>
+          <Button variant="primary" onClick={logout}>Logout</Button>
+        </Col>
+      </Row> */}
+    </Container>
   )
 }
